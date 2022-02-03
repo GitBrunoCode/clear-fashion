@@ -74,13 +74,21 @@ for (let i=0; i<marketplace.length;i++)
     brand_name.push(marketplace[i].brand);
   }
 }
-
 console.log(brand_name, "number of brand:",brand_name.length);
+
 // 🎯 TODO: Sort by price
 // 1. Create a function to sort the marketplace products by price
 // 2. Create a variable and assign it the list of products by price from lowest to highest
 // 3. Log the variable
 
+
+
+let marketplace_sort=marketplace.sort(function(product_a, product_b){
+  return product_a.price - product_b.price;
+});
+
+
+console.log(marketplace_sort);
 
 // 🎯 TODO: Sort by date
 // 1. Create a function to sort the marketplace objects by products date
