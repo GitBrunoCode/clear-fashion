@@ -88,7 +88,7 @@ function price_sort(a,b) {
 }
 
 marketplace_sort_price=marketplace.sort(price_sort)
-console.log(marketplace_sort_price);
+console.log("sort price",marketplace_sort_price);
 
 // 🎯 TODO: Sort by date
 // 1. Create a function to sort the marketplace objects by products date
@@ -102,21 +102,25 @@ function date_sort(a, b) {
 }
 
 marketplace_sort_date=marketplace.sort(date_sort)
-console.log(marketplace_sort_date)
+console.log("sort date:",marketplace_sort_date)
 
 // 🎯 TODO: Filter a specific price range
 // 1. Filter the list of products between 50€ and 100€
 // 2. Log the list
 
+let marketplace_price_50_100=marketplace.filter(x=>x.price<100 && x.price>50)
+console.log("filter 50-100:",marketplace_price_50_100)
 
 // 🎯 TODO: Average price
 // 1. Determine the average price of the marketplace
 // 2. Log the average
 
-
-
-
-
+let price_list=[];
+for (let i=0;i<marketplace.length;i++)
+{
+  price_list.push(marketplace[i].price)
+}
+console.log("average:",price_list.reduce((a, b) => a + b, 0)/marketplace.length)
 /**
  * 🏎
  * We are almost done with the `marketplace` variable
