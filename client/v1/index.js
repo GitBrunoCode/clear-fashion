@@ -32,8 +32,8 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // I can find on these e-shops
 // 2. Log the variable
 
-
-
+const cheapest="https://www.loom.fr"
+console.log("the cheapest",cheapest)
 
 
 /**
@@ -45,9 +45,19 @@ console.log(MY_FAVORITE_BRANDS[0]);
  * 👕
  */
 
+
+
+
+// name is a member of myModule due to the export above
+
+
+
 // 🎯 TODO: Number of products
 // 1. Create a variable and assign it the number of products
 // 2. Log the variable
+
+const number_products=marketplace.length;
+console.log("Number of product: ",number_products);
 
 
 // 🎯 TODO: Brands name
