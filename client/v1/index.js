@@ -144,6 +144,37 @@ console.log("average:",price_list.reduce((a, b) => a + b, 0)/marketplace.length)
 // 2. Log the variable
 // 3. Log the number of products by brands
 
+function Brand_Products(market)
+{
+  let brand_dict={};
+  for (let i=0;i<market.length;i++)
+  {
+    var clone = Object.assign({}, market[i]);
+    delete clone.brand;
+
+    if (market[i].brand in brand_dict)
+    {
+      brand_dict[market[i].brand].push(clone);
+    }
+    else
+    {
+      brand_dict[market[i].brand]=[clone];
+    }
+    
+  }
+  return brand_dict
+}
+
+const bybrand=Brand_Products(marketplace)
+console.log("Product by brand: ",bybrand);
+
+for (const [key, value] of Object.entries(bybrand)) {
+  console.log(key," product number : ",bybrand[key].length);
+}
+
+
+
+
 
 // 🎯 TODO: Sort by price for each brand
 // 1. For each brand, sort the products by price, from highest to lowest
