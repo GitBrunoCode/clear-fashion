@@ -182,15 +182,18 @@ for (const key of Object.keys(brand_prod_by_price))
 {
   brand_prod_by_price[key]=brand_prod_by_price[key].sort(price_sort)
 }
-console.log(brand_prod_by_price)
+console.log("Sort by brand and by price :",brand_prod_by_price)
 
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
 // 2. Log the sort
 
-
-
-
+const brand_prod_by_date=Object.assign({},bybrand)
+for (const key of Object.keys(brand_prod_by_date))
+{
+  brand_prod_by_date[key]=brand_prod_by_date[key].sort(date_sort)
+}
+console.log("Sort by brand and by date :",brand_prod_by_date)
 
 /**
  * 💶
