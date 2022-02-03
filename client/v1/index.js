@@ -168,18 +168,21 @@ function Brand_Products(market)
 const bybrand=Brand_Products(marketplace)
 console.log("Product by brand: ",bybrand);
 
-for (const [key, value] of Object.entries(bybrand)) {
+for (const key of Object.keys(bybrand)) {
   console.log(key," product number : ",bybrand[key].length);
 }
-
-
-
 
 
 // 🎯 TODO: Sort by price for each brand
 // 1. For each brand, sort the products by price, from highest to lowest
 // 2. Log the sort
 
+const brand_prod_by_price=Object.assign({},bybrand)
+for (const key of Object.keys(brand_prod_by_price))
+{
+  brand_prod_by_price[key]=brand_prod_by_price[key].sort(price_sort)
+}
+console.log(brand_prod_by_price)
 
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
