@@ -81,13 +81,12 @@ console.log(brand_name, "number of brand:",brand_name.length);
 // 2. Create a variable and assign it the list of products by price from lowest to highest
 // 3. Log the variable
 
-let marketplace_sort_price=[]
 
 function price_sort(a,b) {
   return a.price - b.price;
 }
 
-marketplace_sort_price=marketplace.sort(price_sort)
+let marketplace_sort_price=Object.assign({},marketplace.sort(price_sort))
 console.log("sort price",marketplace_sort_price);
 
 // 🎯 TODO: Sort by date
@@ -95,13 +94,11 @@ console.log("sort price",marketplace_sort_price);
 // 2. Create a variable and assign it the list of products by date from recent to old
 // 3. Log the variable
 
-let marketplace_sort_date=[]
-
 function date_sort(a, b) {
   return new Date(a.date).getTime() - new Date(b.date).getTime();
 }
 
-marketplace_sort_date=marketplace.sort(date_sort)
+let marketplace_sort_date=Object.assign({},marketplace.sort(date_sort))
 console.log("sort date:",marketplace_sort_date)
 
 // 🎯 TODO: Filter a specific price range
@@ -180,9 +177,12 @@ for (const key of Object.keys(bybrand)) {
 const brand_prod_by_price=Object.assign({},bybrand)
 for (const key of Object.keys(brand_prod_by_price))
 {
-  brand_prod_by_price[key]=brand_prod_by_price[key].sort(price_sort)
+  brand_prod_by_price[key]=Object.assign({},brand_prod_by_price[key].sort(price_sort))
 }
 console.log("Sort by brand and by price :",brand_prod_by_price)
+
+
+// let marketplace_sort_price=Object.assign({},marketplace.sort(price_sort))
 
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
@@ -191,7 +191,7 @@ console.log("Sort by brand and by price :",brand_prod_by_price)
 const brand_prod_by_date=Object.assign({},bybrand)
 for (const key of Object.keys(brand_prod_by_date))
 {
-  brand_prod_by_date[key]=brand_prod_by_date[key].sort(date_sort)
+  brand_prod_by_date[key]=Object.assign({},brand_prod_by_date[key].sort(date_sort))
 }
 console.log("Sort by brand and by date :",brand_prod_by_date)
 
@@ -205,9 +205,6 @@ console.log("Sort by brand and by date :",brand_prod_by_date)
 // 🎯 TODO: Compute the p90 price value
 // 1. Compute the p90 price value of each brand
 // The p90 value (90th percentile) is the lower value expected to be exceeded in 90% of the products
-
-
-
 
 
 /**
