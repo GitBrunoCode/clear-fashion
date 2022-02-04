@@ -182,8 +182,6 @@ for (const key of Object.keys(brand_prod_by_price))
 console.log("Sort by brand and by price :",brand_prod_by_price)
 
 
-// let marketplace_sort_price=Object.assign({},marketplace.sort(price_sort))
-
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
 // 2. Log the sort
@@ -205,6 +203,16 @@ console.log("Sort by brand and by date :",brand_prod_by_date)
 // 🎯 TODO: Compute the p90 price value
 // 1. Compute the p90 price value of each brand
 // The p90 value (90th percentile) is the lower value expected to be exceeded in 90% of the products
+
+const p90_bybrand={}
+
+for (const [key,value] of Object.entries(brand_prod_by_price))
+{
+  const index=Math.floor(Object.keys(value).length*0.9);
+  p90_bybrand[key]=brand_prod_by_price[key][index].price;
+}
+
+console.log("P90 by brand:",p90_bybrand)
 
 
 /**
