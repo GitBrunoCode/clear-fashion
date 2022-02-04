@@ -320,10 +320,14 @@ console.log("Reasonnable price :",COTELE_PARIS.every((value)=>value.price<=100))
 
 console.log("Product :",COTELE_PARIS.find((value)=>value.uuid==`b56c6d88-749a-5b4c-b571-e5b5c6483131`))
 
-
 // 🎯 TODO: Delete a specific product
 // 1. Delete the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
 // 2. Log the new list of product
+
+const index_del=COTELE_PARIS.findIndex((value)=>value.uuid==`b56c6d88-749a-5b4c-b571-e5b5c6483131`)
+console.log(index_del)
+delete(COTELE_PARIS[index_del])
+console.log(COTELE_PARIS)
 
 // 🎯 TODO: Save the favorite product
 let blueJacket = {
@@ -340,6 +344,10 @@ jacket.favorite = true;
 
 // 1. Log `blueJacket` and `jacket` variables
 // 2. What do you notice?
+console.log("Without assign function")
+
+console.log(blueJacket)
+console.log(jacket)
 
 blueJacket = {
   'link': 'https://coteleparis.com/collections/tous-les-produits-cotele/products/la-veste-bleu-roi',
@@ -349,9 +357,11 @@ blueJacket = {
 
 // 3. Update `jacket` property with `favorite` to true WITHOUT changing blueJacket properties
 
-
-
-
+console.log("Assign function")
+jacket=Object.assign({},blueJacket)
+jacket.favorite = true;
+console.log(blueJacket)
+console.log(jacket)
 
 /**
  * 🎬
@@ -362,3 +372,6 @@ blueJacket = {
 // 🎯 TODO: Save in localStorage
 // 1. Save MY_FAVORITE_BRANDS in the localStorage
 // 2. log the localStorage
+
+localStorage.setItem('MY_FAVORITE_BRANDS', JSON.stringify(MY_FAVORITE_BRANDS));
+console.log(JSON.parse(localStorage.getItem('MY_FAVORITE_BRANDS')));
