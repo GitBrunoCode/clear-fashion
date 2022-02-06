@@ -10,6 +10,7 @@ const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
+const selectBrand = document.querySelector('#brand-select');
 
 /**
  * Set global value
@@ -19,6 +20,10 @@ const spanNbProducts = document.querySelector('#nbProducts');
 const setCurrentProducts = ({result, meta}) => {
   currentProducts = result;
   currentPagination = meta;
+  if(selectBrand.value!="all")
+  {
+    currentProducts=GetProdbyBrand()
+  }
 };
 
 /**
@@ -102,6 +107,17 @@ const render = (products, pagination) => {
   renderIndicators(pagination);
 };
 
+function GetProdbyBrand(brand){
+  let product_list=[];
+  for (let i=0;i<currentProducts.length;i++)
+  {
+    if (currentProducts[i].brand == brand){
+      product_list.push(currentProducts[i])
+    }
+  }
+  return product_list
+}
+
 /**
  * Declaration of all Listeners
  */
@@ -124,9 +140,25 @@ selectPage.addEventListener('change', async (event) => {
   render(currentProducts, currentPagination);
 });
 
+/**
+ * [FILTER] Select the brand to display
+ */
+ selectBrand.addEventListener('change', async (event) => {
+  if (event.target.value!="all"){
+    renderProducts(GetProdbyBrand(event.target.value))
+  }
+  else{
+    console.log("all")
+    const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize);
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
 
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
+
