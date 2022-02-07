@@ -20,10 +20,7 @@ const selectBrand = document.querySelector('#brand-select');
 const setCurrentProducts = ({result, meta}) => {
   currentProducts = result;
   currentPagination = meta;
-  if(selectBrand.value!="all")
-  {
-    currentProducts=GetProdbyBrand()
-  }
+  
 };
 
 /**
@@ -56,24 +53,40 @@ const fetchProducts = async (page = 1, size = 12) => {
  * @param  {Array} products
  */
 const renderProducts = products => {
+  if(selectBrand.value!="all"){
+    products=GetProdbyBrand(selectBrand.value)
+  }
   const fragment = document.createDocumentFragment();
-  const div = document.createElement('div');
-  const template = products
-    .map(product => {
-      return `
-      <div class="product" id=${product.uuid}>
-        <span>${product.brand}</span>
-        <a href="${product.link}">${product.name}</a>
-        <span>${product.price}</span>
-      </div>
-    `;
-    })
-    .join('');
-
-  div.innerHTML = template;
-  fragment.appendChild(div);
-  sectionProducts.innerHTML = '<h2>Products</h2>';
-  sectionProducts.appendChild(fragment);
+  // if products to display
+  if(products.length!=0)
+  {
+    const div = document.createElement('div');
+    const template = products
+      .map(product => {
+        return `
+        <div class="product" id=${product.uuid}>
+          <span>${product.brand}</span>
+          <a href="${product.link}">${product.name}</a>
+          <span>${product.price}</span>
+        </div>
+      `;
+      })
+      .join('');
+  
+    div.innerHTML = template;
+    fragment.appendChild(div);
+    sectionProducts.innerHTML = '<h2>Products</h2>';
+    sectionProducts.appendChild(fragment);
+  }
+  else // to correct display bug
+  {
+    const div = document.createElement('div');
+    div.innerHTML = "no products available";
+    fragment.appendChild(div);
+    sectionProducts.innerHTML = '<h2>Products</h2>';
+    sectionProducts.appendChild(fragment);
+  }
+  
 };
 
 /**
@@ -148,7 +161,6 @@ selectPage.addEventListener('change', async (event) => {
     renderProducts(GetProdbyBrand(event.target.value))
   }
   else{
-    console.log("all")
     const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize);
     setCurrentProducts(products);
     render(currentProducts, currentPagination);
@@ -157,8 +169,37 @@ selectPage.addEventListener('change', async (event) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
-
   setCurrentProducts(products);
+  setProductsOptionFilter(products);
   render(currentProducts, currentPagination);
 });
 
+
+
+function setProductsOptionFilter(products){
+  let brand_name=GetBrands(products["result"])
+  for (let i=0;i<brand_name.length;i++){
+    var x=document.getElementById("brand-select");
+    // create option using DOM
+    const newOption = document.createElement('option');
+    const optionText = document.createTextNode(brand_name[i]);
+    // set option text
+    newOption.appendChild(optionText);
+    // and option value
+    newOption.setAttribute('value',brand_name[i]);
+    // add the option to the select box
+    x.appendChild(newOption);
+  }
+}
+
+function GetBrands(marketplace){
+  let brand_name=[];
+  for (let i=0; i<marketplace.length;i++)
+  {
+    if (!brand_name.includes(marketplace[i].brand))
+    {
+      brand_name.push(marketplace[i].brand);
+    }
+  }
+  return(brand_name);
+}
