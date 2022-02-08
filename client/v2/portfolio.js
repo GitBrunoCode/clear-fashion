@@ -4,6 +4,7 @@
 // current products on the page
 let currentProducts = [];
 let currentPagination = {};
+let currentBrand = "all";
 
 // instantiate the selectors
 const selectShow = document.querySelector('#show-select');
@@ -53,16 +54,18 @@ const fetchProducts = async (page = 1, size = 12) => {
  * @param  {Array} products
  */
 const renderProducts = products => {
+  console.log("products",products)
+
   if(selectBrand.value!="all"){
-    products=GetProdbyBrand(selectBrand.value)
+    products=GetProdbyBrand(products)
+    products=products[selectBrand.value]
   }
   const fragment = document.createDocumentFragment();
   // if products to display
   if(products.length!=0)
   {
     const div = document.createElement('div');
-    const template = products
-      .map(product => {
+    let template = products.map(product => {
         return `
         <div class="product" id=${product.uuid}>
           <span>${product.brand}</span>
@@ -70,8 +73,9 @@ const renderProducts = products => {
           <span>${product.price}</span>
         </div>
       `;
-      })
+        })
       .join('');
+     
   
     div.innerHTML = template;
     fragment.appendChild(div);
@@ -110,25 +114,43 @@ const renderPagination = pagination => {
  */
 const renderIndicators = pagination => {
   const {count} = pagination;
-
   spanNbProducts.innerHTML = count;
+};
+
+const renderBrands = (brands) => {
+let options = `<option value="all">undefined</option>`;
+Object.keys(brands).forEach((brand)=>{
+options += `<option value="${brand}">${brand}</option>`;
+});
+selectBrand.innerHTML = options;
+//selectBrand.selectedIndex=0;
+
 };
 
 const render = (products, pagination) => {
   renderProducts(products);
   renderPagination(pagination);
   renderIndicators(pagination);
+  renderBrands(GetProdbyBrand(products))
 };
 
-function GetProdbyBrand(brand){
-  let product_list=[];
-  for (let i=0;i<currentProducts.length;i++)
-  {
-    if (currentProducts[i].brand == brand){
-      product_list.push(currentProducts[i])
+function GetProdbyBrand(products){
+  let brand={};
+  let brand_name=GetBrands(products)
+  for (let i=0;i<brand_name.length;i++){
+    brand[brand_name[i]]=[]
+
+    for(let j=0;j<products.length;j++)
+    {
+      if (products[j].brand==brand_name[i])
+      {
+        console.log("a")
+        brand[brand_name[i]].push(products[j])
+      } 
     }
+
   }
-  return product_list
+  return brand;
 }
 
 /**
@@ -157,40 +179,21 @@ selectPage.addEventListener('change', async (event) => {
  * [FILTER] Select the brand to display
  */
  selectBrand.addEventListener('change', async (event) => {
-  if (event.target.value!="all"){
-    renderProducts(GetProdbyBrand(event.target.value))
-  }
-  else{
+    currentBrand=event.target.value;
     const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize);
     setCurrentProducts(products);
     render(currentProducts, currentPagination);
-  }
+    currentBrand=event.target.value
+  
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
   setCurrentProducts(products);
-  setProductsOptionFilter(products);
   render(currentProducts, currentPagination);
 });
 
 
-
-function setProductsOptionFilter(products){
-  let brand_name=GetBrands(products["result"])
-  for (let i=0;i<brand_name.length;i++){
-    var x=document.getElementById("brand-select");
-    // create option using DOM
-    const newOption = document.createElement('option');
-    const optionText = document.createTextNode(brand_name[i]);
-    // set option text
-    newOption.appendChild(optionText);
-    // and option value
-    newOption.setAttribute('value',brand_name[i]);
-    // add the option to the select box
-    x.appendChild(newOption);
-  }
-}
 
 function GetBrands(marketplace){
   let brand_name=[];
