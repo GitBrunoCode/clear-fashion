@@ -20,16 +20,25 @@
         <select name="page" id="page-select"> </select>
       </div>
       <div id="filters">
-        <span>By reasonable price</span>
-        <span>By recently released</span>
+        
         <div id="brand">
           <label for="brand-select">By brands:</label>
           <select name="brand" id="brand-select"> 
             <option value="all">undefined</option>
-            
           </select>
         </div>
       </div>
+
+      <div id="check">
+Page filter:
+        <input type="checkbox" id="reasonable_price" name="reasonable_price">
+        <label for="reasonable_price">Reasonable price</label>
+        <input type="checkbox" id="recently_released" name="recently_released">
+        <label for="recently_released">Recently released</label>
+
+
+      </div>
+
       <div id="sort">
         <label for="sort-select">Sort:</label>
         <select name="sort" id="sort-select">
