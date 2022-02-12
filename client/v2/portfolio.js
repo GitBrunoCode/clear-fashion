@@ -148,9 +148,6 @@ selectPage.addEventListener('change', async (event) => {
   currentPagination.currentPage=parseInt(event.target.value)
   currentProducts=allProducts.result
   currentProducts=GetCorrectProd(currentPagination.currentPage,currentPagination.pageCount,current_brand)
-  document.getElementById("reasonable_price").checked = false;
-  document.getElementById("recently_released").checked = false;
-
   render(currentProducts, currentPagination);
 });
 
@@ -161,52 +158,22 @@ selectPage.addEventListener('change', async (event) => {
     currentProducts=allProducts.result
     currentProducts=GetCorrectProd(currentPagination.currentPage,currentPagination.pageCount,event.target.value)
     current_brand=event.target.value
-    renderProducts(GetProdbyBrand(event.target.value),currentPagination)
+    renderProducts(currentProducts,currentPagination)
 });
 
 /**
  * [Checkbox] Products with price < 50 
  */
  checkprice.addEventListener('change', async (event) => {
-  let products=[]
-  if (checkprice.checked==true){
-    if(checkreleased.checked==true){
-      products = FilterDatePrice()
-    }
-    else{
-      products = FilterPrice()
-    }  
-  }
-  else{
-    if(checkreleased.checked==true){
-      products = FilterDate()
-    }
-    else{
-      products = currentProducts
-    }
-  }
-  renderProducts(products,currentPagination)
+  currentProducts=allProducts.result
+  currentProducts=GetCorrectProd(currentPagination.currentPage,currentPagination.pageCount,current_brand)
+  renderProducts(currentProducts,currentPagination)
 });
 
 checkreleased.addEventListener('change', async (event) => {
-  let products=[]
-  if (checkreleased.checked==true){
-    if(checkprice.checked==true){
-      products = FilterDatePrice()
-    }
-    else{
-      products = FilterDate()
-    } 
-  }
-  else{
-    if(checkprice.checked==true){
-      products = FilterPrice()
-    }
-    else{
-      products = currentProducts
-    }
-  }
-  renderProducts(products,currentPagination)
+  currentProducts=allProducts.result
+  currentProducts=GetCorrectProd(currentPagination.currentPage,currentPagination.pageCount,current_brand)
+  renderProducts(currentProducts,currentPagination)
 });
 
 /**
@@ -275,30 +242,45 @@ function GetCorrectProd(nb_page,len_page,brand)
 
 function GetProdbyBrand(brand){
   let product_list=[];
-  for (let i=0;i<currentProducts.length;i++)
+  let products=[]
+  if (checkreleased.checked==true && checkprice.checked==true){
+    products=FilterDatePrice(currentProducts.slice())
+  }
+  else if (checkprice.checked==true){
+    products=FilterPrice(currentProducts.slice())
+
+  }
+  else if (checkreleased.checked==true){
+    products=FilterDate(currentProducts.slice())
+  }
+  else
+  {
+    products=currentProducts
+  }
+  for (let i=0;i<products.length;i++)
   {
     if(brand=='all'){
-      product_list.push(currentProducts[i])
+      product_list.push(products[i])
     }
-    else if (currentProducts[i].brand == brand){
-      product_list.push(currentProducts[i])
+    else if (products[i].brand == brand){
+      product_list.push(products[i])
     }
   }
   return product_list
 }
 
-function FilterPrice(){
-  let products=currentProducts.filter(x=>x.price<50)
+function FilterPrice(product){
+  let products=product.filter(x=>x.price<50)
   return products
 }
 
-function FilterDate(){
-  let products=currentProducts.filter(x=>new Date(x.released).getTime()>new Date(Date.now() - 12096e5))
+function FilterDate(product){
+  let products=product.filter(x=>new Date(x.released).getTime()>new Date(Date.now() - 12096e5))
   return products
 }
 
-function FilterDatePrice()
+function FilterDatePrice(product)
 {
-  let products=currentProducts.filter(x=>new Date(x.released).getTime()>new Date(Date.now() - 12096e5) && x.price<50)
+  let products=product.filter(x=>new Date(x.released).getTime()>new Date(Date.now() - 12096e5) && x.price<50)
   return products
 }
