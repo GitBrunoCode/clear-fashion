@@ -16,12 +16,15 @@ const spanNbProducts = document.querySelector("#nbProducts");
 const selectBrand = document.querySelector("#brand-select");
 const checkprice = document.querySelector("#reasonable_price");
 const checkreleased = document.querySelector("#recently_released");
+const checkfav = document.querySelector("#favorites_only");
+
 const selectSort = document.querySelector("#sort-select");
 const span50 = document.querySelector("#p50");
 const span90 = document.querySelector("#p90");
 const span95 = document.querySelector("#p95");
 const spanNew = document.querySelector("#new");
 const spanLastRelease = document.querySelector("#last_release");
+var favorite_products = [];
 
 /**
  * Set global value
@@ -73,7 +76,9 @@ const renderProducts = (products) => {
     const template = products
       .map((product) => {
         return `
+      
         <div class="product" id=${product.uuid}>
+          <input type="checkbox" name="box" id=cb${product.uuid} value=${product.uuid} />
           <span>${product.brand}</span>
           <a href="${product.link}" target="_blank">${product.name}</a>
           <span>${product.price}</span>
@@ -82,7 +87,7 @@ const renderProducts = (products) => {
       })
       .join("");
 
-    div.innerHTML = template;
+    div.innerHTML = '<form id="Form">' + template + "</form>";
     fragment.appendChild(div);
     sectionProducts.innerHTML = "<h2>Products</h2>";
     sectionProducts.appendChild(fragment);
@@ -133,7 +138,6 @@ const renderIndicators = (pagination) => {
   span95.innerHTML = p95;
 
   arr.sort(date_sort_down);
-  console.log(arr);
   spanLastRelease.innerHTML = arr[0].released;
   spanNew.innerHTML = getNbNewReleased(arr);
 };
@@ -230,6 +234,51 @@ selectSort.addEventListener("change", async (event) => {
   renderProducts(currentProducts, currentPagination);
 });
 
+/**
+ * [Checkbox] favorites products
+ */
+ checkfav.addEventListener("change", async (event) => {
+  currentProducts = allProducts.result;
+  currentProducts = GetCorrectProd(
+    currentPagination.currentPage,
+    currentPagination.pageCount,
+    current_brand
+  );
+  renderProducts(currentProducts, currentPagination);
+});
+
+
+
+
+
+window.onload = function () {
+  document.getElementById("go").addEventListener(
+    "click",
+    function () {
+      var form = document.getElementById("Form");
+      var i;
+      for (i = 0; i < form.box.length; i++) {
+        if (form.box[i].type == "checkbox") {
+          if (form.box[i].checked == true) {
+            if (favorite_products.includes(form.box[i].value) == false) {
+              favorite_products.push(form.box[i].value);
+            }
+          }
+        }
+      }
+    },
+    false
+  );
+
+  document.getElementById("resetfav").addEventListener(
+    "click",
+    function () {
+      favorite_products = [];
+    },
+    false
+  );
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
   const products = await fetchProducts();
   const a = await fetchProducts(1, 999);
@@ -301,6 +350,11 @@ function GetProdbyBrand(brand) {
     products = currentProducts;
   }
 
+  if(checkfav.checked==true)
+  {
+    products=FilterFav(products.slice());
+  }
+
   if (current_sort == "price-asc") {
     SortByPrice(products, true);
   } else if (current_sort == "price-desc") {
@@ -328,7 +382,8 @@ function FilterPrice(product) {
 
 function FilterDate(product) {
   let products = product.filter(
-    (x) => new Date(x.released).getTime() > new Date(Date.now() - 12096e5).getTime()
+    (x) =>
+      new Date(x.released).getTime() > new Date(Date.now() - 12096e5).getTime()
   );
   return products;
 }
@@ -336,8 +391,8 @@ function FilterDate(product) {
 function FilterDatePrice(product) {
   let products = product.filter(
     (x) =>
-      new Date(x.released).getTime() > new Date(Date.now() - 12096e5).getTime() &&
-      x.price < 50
+      new Date(x.released).getTime() >
+        new Date(Date.now() - 12096e5).getTime() && x.price < 50
   );
   return products;
 }
@@ -348,7 +403,6 @@ function SortByPrice(product, up) {
   } else {
     Object.assign({}, product.sort(price_sort_up));
   }
-  console.log(product);
 }
 
 function SortByDate(product, up) {
@@ -382,12 +436,30 @@ function pCalculator(products, pvalue) {
 function getNbNewReleased(arr) {
   let nb = 0;
   for (let i = 0; i < arr.length; i++) {
-    if (new Date(arr[i].released).getTime() > new Date(Date.now()-12096e5).getTime()) {
+    if (
+      new Date(arr[i].released).getTime() >
+      new Date(Date.now() - 12096e5).getTime()
+    ) {
       nb++;
     } else {
       break;
     }
   }
-  console.log(nb)
   return nb;
+}
+
+function FilterFav(product){
+  let products = product.filter(
+    (x) => favorite_products.includes(x.uuid));
+  return products;
+
+}
+
+function FilterDatePrice(product) {
+  let products = product.filter(
+    (x) =>
+      new Date(x.released).getTime() >
+        new Date(Date.now() - 12096e5).getTime() && x.price < 50
+  );
+  return products;
 }
