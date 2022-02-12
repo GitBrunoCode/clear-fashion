@@ -5,9 +5,6 @@
 let currentProducts = [];
 let currentPagination = {};
 let allProducts=[];
-let oldproductsPrice=[];
-let oldproductsDate=[];
-
 let current_brand="all";
 
 
