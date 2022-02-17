@@ -21,8 +21,10 @@ const parse = data => {
           .find('.productList-price')
           .text()
       );
+      let link= $(element).find('.productList-link').attr('href');
+      link= 'https://www.dedicatedbrand.com'+link;
 
-      return {name, price};
+      return {name,link, price};
     })
     .get();
 };
