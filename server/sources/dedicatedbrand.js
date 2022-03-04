@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const {'v5': uuidv5} = require('uuid');
+
 
 /**
  * Parse webpage e-shop
@@ -16,15 +18,22 @@ const parse = data => {
         .text()
         .trim()
         .replace(/\s/g, ' ');
+        const photo= $(element)
+        .find('.productList-image img')
+        .attr('data-src');
       const price = parseInt(
         $(element)
           .find('.productList-price')
           .text()
       );
       let link= $(element).find('.productList-link').attr('href');
+      let brand="dedicatedbrand";
       link= 'https://www.dedicatedbrand.com'+link;
-
-      return {name,link, price};
+      if(isNaN(price)==false)
+      {
+        let uuid= uuidv5(link, uuidv5.URL)
+        return {link,brand,price,name,photo,uuid};
+      }
     })
     .get();
 };

@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const {'v5': uuidv5} = require('uuid');
 
 /**
  * Parse webpage e-shop
@@ -17,12 +18,22 @@ const parse = data => {
         .trim()
         .replace(/\s/g, ' ')
         .split("  ")[0];
+      let photo = $(element)
+        .find('.left-block .product-image-container .product_img_link img')
+        .attr('data-original');
       const price = parseInt(
         $(element)
           .find('.price').text()
+
       );
+      
       let link= $(element).find('.product-name').attr('href');
-      return {name,link, price};
+      let brand="adresseparis"
+      if(isNaN(price)==false)
+      {
+        let uuid= uuidv5(link, uuidv5.URL)
+        return {link,brand,price,name,photo,uuid};
+      }
     })
     .get();
 };
@@ -50,3 +61,9 @@ module.exports.scrape = async url => {
     return null;
   }
 };
+
+function uuidv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
