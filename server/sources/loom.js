@@ -32,7 +32,9 @@ const parse = data => {
         'photo': $(element)
           .find('noscript img.product_card__image')
           .attr('src'),
-        'uuid': uuidv5(link, uuidv5.URL)
+        'uuid': uuidv5(link, uuidv5.URL),
+        'date': new Date().toISOString().slice(0,10)
+
       };
     })
     .get();
