@@ -31,9 +31,9 @@ const parse = data => {
       let brand="adresseparis"
       if(isNaN(price)==false)
       {
-        let uuid= uuidv5(link, uuidv5.URL)
+        let _id= uuidv5(link, uuidv5.URL)
         let date=new Date().toISOString().slice(0,10)
-        return {link,brand,price,name,photo,uuid,date};
+        return {_id,link,brand,price,name,photo,date};
       }
     })
     .get();

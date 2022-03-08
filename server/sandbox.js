@@ -25,7 +25,7 @@ async function sandbox (eshop) {
     console.log("all brands have been scraped")
     for(let j=0;j<products.length;j++)
     {
-      if(contains(products_list,"uuid",products[j]["uuid"])==false)
+      if(contains(products_list,"_id",products[j]["_id"])==false)
       {
         products_list.push(products[j]);
       }
