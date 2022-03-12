@@ -80,9 +80,42 @@ async function Prod_lt_2w() {
     });
 }
 
+module.exports.Prod_by_id = async (id) => {
+  console.log(id);
+  const db = await Connection();
+  const collection = db.collection("products");
+  const result = await collection.find({ _id: id }).toArray();
+  console.log(result);
+  return result;
+};
+
+module.exports.Search = async (params) => {
+  var brand = ["loom", "montlimart", "adresseparis", "dedicatedbrand"];
+  var price = 9999999999999;
+  var limit = 12;
+  if ("limit" in params) {
+    var limit = parseInt(params.limit);
+  }
+  if ("brand" in params) {
+    var brand = [params.brand];
+  }
+  if ("price" in params) {
+    var price = parseInt(params.price);
+  }
+  const db = await Connection();
+  const collection = db.collection("products");
+  const result = await collection
+    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
+    .limit(limit)
+    .toArray();
+  console.log(result);
+  return result;
+};
+
 // InsertProducts();
 // Prod_by_brand("loom");
 // Prod_lt_price(50);
 // Prod_by_price();
 // Prod_by_date();
 // Prod_lt_2w();
+// Prod_by_id("2f793a3f-833d-58d0-aa47-d739069f10e5")
