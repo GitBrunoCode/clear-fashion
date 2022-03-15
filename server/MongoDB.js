@@ -1,5 +1,6 @@
 const { MongoClient } = require("mongodb");
 const products = require("./sources/products.json");
+const { calculateLimitAndOffset, paginate } = require("paginate-info");
 
 async function Connection() {
   const MONGODB_URI =
@@ -90,11 +91,14 @@ module.exports.Prod_by_id = async (id) => {
 };
 
 module.exports.Search = async (params) => {
-  var brand = ["loom", "montlimart", "adresseparis", "dedicatedbrand"];
+  const db = await Connection();
+  const collection = db.collection("products");
+  var brand = await collection.distinct("brand");
   var price = 9999999999999;
-  var limit = 12;
-  if ("limit" in params) {
-    var limit = parseInt(params.limit);
+  var size = 12;
+  var page = 1;
+  if ("size" in params) {
+    var size = parseInt(params.size);
   }
   if ("brand" in params) {
     var brand = [params.brand];
@@ -102,16 +106,60 @@ module.exports.Search = async (params) => {
   if ("price" in params) {
     var price = parseInt(params.price);
   }
-  const db = await Connection();
-  const collection = db.collection("products");
-  const result = await collection
+  if ("page" in params) {
+    var page = parseInt(params.page);
+  }
+  const { limit, offset } = calculateLimitAndOffset(page, size);
+  var result = {};
+  result["maxpage"] = await collection
+    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
+    .count();
+  result["maxpage"] = Math.ceil(result["maxpage"] / size);
+  result["products"] = await collection
     .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
     .limit(limit)
+    .skip(offset)
     .toArray();
   console.log(result);
   return result;
 };
 
+module.exports.DB_info = async () => {
+  let result = {};
+  const db = await Connection();
+  const collection = db.collection("products");
+  result["nb_products"] = await collection.countDocuments();
+  result["last released"] = await collection
+    .find()
+    .sort({ date: -1 })
+    .limit(1)
+    .toArray();
+  result["last released"] = result["last released"][0]["date"];
+  result["Q50"] = await collection
+    .find()
+    .sort({ price: 1 })
+    .skip(Math.floor(result["nb_products"] / 2))
+    .limit(1)
+    .toArray();
+  result["Q50"] = result["Q50"][0]["price"];
+  result["Q90"] = await collection
+    .find()
+    .sort({ price: 1 })
+    .skip(Math.floor(result["nb_products"] * 0.9))
+    .limit(1)
+    .toArray();
+  result["Q90"] = result["Q90"][0]["price"];
+  result["Q95"] = await collection
+    .find()
+    .sort({ price: 1 })
+    .skip(Math.floor(result["nb_products"] * 0.95))
+    .limit(1)
+    .toArray();
+  result["Q95"] = result["Q95"][0]["price"];
+  result["brands"] = await collection.distinct("brand");
+  console.log(result);
+  return result;
+};
 // InsertProducts();
 // Prod_by_brand("loom");
 // Prod_lt_price(50);
