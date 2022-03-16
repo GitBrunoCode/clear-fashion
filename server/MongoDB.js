@@ -97,6 +97,7 @@ module.exports.Search = async (params) => {
   var price = 9999999999999;
   var size = 12;
   var page = 1;
+  var sort="price_asc";
   if ("size" in params) {
     var size = parseInt(params.size);
   }
@@ -109,6 +110,9 @@ module.exports.Search = async (params) => {
   if ("page" in params) {
     var page = parseInt(params.page);
   }
+  if ("sort" in params){
+    var sort=[params.sort];
+  }
   const { limit, offset } = calculateLimitAndOffset(page, size);
   var result = {};
   result["pagecount"] = await collection
@@ -117,13 +121,50 @@ module.exports.Search = async (params) => {
   result["pagecount"] = Math.ceil(result["pagecount"] / size);
   result["currentPage"] = page;
   result["pageSize"] = size;
-  result["products"] = await collection
+
+  if(sort=="price_asc"){
+    result["products"] = await collection
     .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
+    .sort({price: 1})
     .limit(limit)
     .skip(offset)
     .toArray();
   console.log(result);
   return result;
+  }
+  else if(sort=="price_desc")
+  {
+    result["products"] = await collection
+    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
+    .sort({price: -1})
+    .limit(limit)
+    .skip(offset)
+    .toArray();
+  console.log(result);
+  return result;
+  }
+  else if(sort=="date_asc")
+  {
+    result["products"] = await collection
+    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
+    .sort({date: 1})
+    .limit(limit)
+    .skip(offset)
+    .toArray();
+  console.log(result);
+  return result;
+  }
+  else(sort=="date_desc")
+  {
+    result["products"] = await collection
+    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
+    .sort({date: -1})
+    .limit(limit)
+    .skip(offset)
+    .toArray();
+  console.log(result);
+  return result;
+  }
 };
 
 module.exports.DB_info = async () => {
