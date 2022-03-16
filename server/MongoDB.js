@@ -111,10 +111,12 @@ module.exports.Search = async (params) => {
   }
   const { limit, offset } = calculateLimitAndOffset(page, size);
   var result = {};
-  result["maxpage"] = await collection
+  result["pagecount"] = await collection
     .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
     .count();
-  result["maxpage"] = Math.ceil(result["maxpage"] / size);
+  result["pagecount"] = Math.ceil(result["pagecount"] / size);
+  result["currentPage"] = page;
+  result["pageSize"] = size;
   result["products"] = await collection
     .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
     .limit(limit)
@@ -157,6 +159,9 @@ module.exports.DB_info = async () => {
     .toArray();
   result["Q95"] = result["Q95"][0]["price"];
   result["brands"] = await collection.distinct("brand");
+  result["nb_new_products"] = await collection
+    .find({ date: { $gt: new Date(Date.now() - 12096e5).toISOString() } })
+    .count();
   console.log(result);
   return result;
 };

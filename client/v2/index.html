@@ -20,31 +20,16 @@
         <select name="page" id="page-select"> </select>
       </div>
       <div id="filters">
-        
+        <span>By reasonable price</span>
+        <span>By recently released</span>
         <div id="brand">
           <label for="brand-select">By brands:</label>
-          <select name="brand" id="brand-select"> 
-            <option value="all">undefined</option>
-          </select>
+          <select name="brand" id="brand-select"> </select>
         </div>
       </div>
-
-      <div id="check">
-        <input type="checkbox" id="reasonable_price" name="reasonable_price">
-        <label for="reasonable_price">Reasonable price</label>
-        <input type="checkbox" id="recently_released" name="recently_released">
-        <label for="recently_released">Recently released</label>
-        <input type="checkbox" id="favorites_only" name="favorites">
-        <label for="favorites_only">Favorites only</label>
-
-
-
-      </div>
-
       <div id="sort">
         <label for="sort-select">Sort:</label>
         <select name="sort" id="sort-select">
-          <option value="normal">undefined</option>
           <option value="price-asc">Cheaper</option>
           <option value="price-desc">Expensive</option>
           <option value="date-asc">Recently released</option>
@@ -76,13 +61,10 @@
       </div>
       <div>
         <span>Last released date</span>
-        <span id="last_release">2020-01-01</span>
+        <span id="last_release">0</span>
       </div>
     </section>
     <section id="products"></section>
     <script type="text/javascript" charset="UTF-8" src="portfolio.js"></script>
-    <p></p>
-    <input type="button" id="go" value="add to my favorites"/>
-    <input type="button" id="resetfav" value="reset my favorites"/>
   </body>
 </html>
