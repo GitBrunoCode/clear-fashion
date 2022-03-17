@@ -97,7 +97,8 @@ module.exports.Search = async (params) => {
   var price = 9999999999999;
   var size = 12;
   var page = 1;
-  var sort="price_asc";
+  var sort = "price_asc";
+  var date = "2011-10-05T14:48:00.000Z";
   if ("size" in params) {
     var size = parseInt(params.size);
   }
@@ -110,60 +111,89 @@ module.exports.Search = async (params) => {
   if ("page" in params) {
     var page = parseInt(params.page);
   }
-  if ("sort" in params){
-    var sort=[params.sort];
+  if ("sort" in params) {
+    var sort = [params.sort];
+  }
+  if ("otherfilter" in params) {
+    if (params.otherfilter == "reas_price") {
+      price = 50;
+      console.log("dfjdsfjifd");
+    }
+    if (params.otherfilter == "rec_date") {
+      date = new Date(Date.now() - 12096e5).toISOString();
+    }
   }
   const { limit, offset } = calculateLimitAndOffset(page, size);
   var result = {};
   result["pagecount"] = await collection
-    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
+    .find({
+      $and: [
+        { brand: { $in: brand } },
+        { price: { $lt: price }, date: { $gt: date } },
+      ],
+    })
     .count();
   result["pagecount"] = Math.ceil(result["pagecount"] / size);
   result["currentPage"] = page;
   result["pageSize"] = size;
 
-  if(sort=="price_asc"){
+  if (sort == "price_asc") {
     result["products"] = await collection
-    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
-    .sort({price: 1})
-    .limit(limit)
-    .skip(offset)
-    .toArray();
-  console.log(result);
-  return result;
-  }
-  else if(sort=="price_desc")
+      .find({
+        $and: [
+          { brand: { $in: brand } },
+          { price: { $lt: price }, date: { $gt: date } },
+        ],
+      })
+      .sort({ price: 1 })
+      .limit(limit)
+      .skip(offset)
+      .toArray();
+    // console.log(result);
+    return result;
+  } else if (sort == "price_desc") {
+    result["products"] = await collection
+      .find({
+        $and: [
+          { brand: { $in: brand } },
+          { price: { $lt: price }, date: { $gt: date } },
+        ],
+      })
+      .sort({ price: -1 })
+      .limit(limit)
+      .skip(offset)
+      .toArray();
+    // console.log(result);
+    return result;
+  } else if (sort == "date_asc") {
+    result["products"] = await collection
+      .find({
+        $and: [
+          { brand: { $in: brand } },
+          { price: { $lt: price }, date: { $gt: date } },
+        ],
+      })
+      .sort({ date: 1 })
+      .limit(limit)
+      .skip(offset)
+      .toArray();
+    //console.log(result);
+    return result;
+  } else sort == "date_desc";
   {
     result["products"] = await collection
-    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
-    .sort({price: -1})
-    .limit(limit)
-    .skip(offset)
-    .toArray();
-  console.log(result);
-  return result;
-  }
-  else if(sort=="date_asc")
-  {
-    result["products"] = await collection
-    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
-    .sort({date: 1})
-    .limit(limit)
-    .skip(offset)
-    .toArray();
-  console.log(result);
-  return result;
-  }
-  else(sort=="date_desc")
-  {
-    result["products"] = await collection
-    .find({ $and: [{ brand: { $in: brand } }, { price: { $lt: price } }] })
-    .sort({date: -1})
-    .limit(limit)
-    .skip(offset)
-    .toArray();
-  console.log(result);
-  return result;
+      .find({
+        $and: [
+          { brand: { $in: brand } },
+          { price: { $lt: price }, date: { $gt: date } },
+        ],
+      })
+      .sort({ date: -1 })
+      .limit(limit)
+      .skip(offset)
+      .toArray();
+    //console.log(result);
+    return result;
   }
 };
 

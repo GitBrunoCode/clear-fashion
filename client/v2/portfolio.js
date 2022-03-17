@@ -8,12 +8,14 @@ let currentSize = 12;
 let currentPageCount = 0;
 let currentBrand = "all";
 let currentFilter="price_asc";
+let currentOtherFilter="none";
 
 // instantiate the selectors
 const selectShow = document.querySelector("#show-select");
 const selectPage = document.querySelector("#page-select");
 const selectBrand = document.querySelector("#brand-select");
-const selectFilter = document.querySelector("#sort-select")
+const selectFilter = document.querySelector("#sort-select");
+const selectOtherFilter = document.querySelector("#limit-select")
 const sectionProducts = document.querySelector("#products");
 const spanNbProducts = document.querySelector("#nbProducts");
 const span50 = document.querySelector("#p50");
@@ -39,9 +41,9 @@ const setCurrentProducts = ({ pagecount, currentPage, pageSize, products }) => {
  * @param  {Number}  [size=12] - size of the page
  * @return {Object}
  */
-const fetchProducts = async (page = 1, size = 12, brand = "all",filter="price_asc") => {
+const fetchProducts = async (page = 1, size = 12, brand = "all",filter="price_asc",otherfilter="none") => {
   try {
-    var query = `http://localhost:8092/products/search?page=${page}&size=${size}&sort=${filter}`;
+    var query = `http://localhost:8092/products/search?page=${page}&size=${size}&sort=${filter}&otherfilter=${otherfilter}`;
     if (brand != "all") {
       query += `&brand=${brand}`;
     }
@@ -78,7 +80,7 @@ const renderProducts = (products) => {
       return `
       <div class="product" id=${product.uuid}>
         <span>${product.brand}</span>
-        <a href="${product.link}">${product.name}</a>
+        <a href="${product.link}" target="_blank">${product.name}</a>
         <span>${product.price}</span>
       </div>
     `;
@@ -144,7 +146,8 @@ selectShow.addEventListener("change", async (event) => {
     currentPagination.currentPage,
     parseInt(event.target.value),
     currentBrand,
-    currentFilter
+    currentFilter,
+    currentOtherFilter,  
   );
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
@@ -157,7 +160,8 @@ selectPage.addEventListener("change", async (event) => {
     parseInt(event.target.value),
     currentSize,
     currentBrand,
-    currentFilter
+    currentFilter,
+    currentOtherFilter,  
   );
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
@@ -168,7 +172,8 @@ selectBrand.addEventListener("change", async (event) => {
     currentPagination.currentPage,
     currentSize,
     event.target.value,
-    currentFilter
+    currentFilter,
+    currentOtherFilter,  
   );
   currentBrand = event.target.value;
   setCurrentProducts(products);
@@ -180,9 +185,23 @@ selectFilter.addEventListener("change", async (event) => {
     currentPagination.currentPage,
     currentSize,
     currentBrand,
-    event.target.value,  
+    event.target.value,
+    currentOtherFilter,    
   );
   currentFilter = event.target.value;
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+});
+
+selectOtherFilter.addEventListener("change", async (event) => {
+  const products = await fetchProducts(
+    currentPagination.currentPage,
+    currentSize,
+    currentBrand,
+    currentFilter,
+    event.target.value,  
+  );
+  currentOtherFilter= event.target.value;
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
