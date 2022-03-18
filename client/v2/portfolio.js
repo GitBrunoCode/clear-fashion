@@ -7,15 +7,17 @@ let currentPagination = {};
 let currentSize = 12;
 let currentPageCount = 0;
 let currentBrand = "all";
-let currentFilter="price_asc";
-let currentOtherFilter="none";
+let currentFilter = "price_asc";
+let currentOtherFilter = "none";
+let favProducts = [];
+var favOnly = false;
 
 // instantiate the selectors
 const selectShow = document.querySelector("#show-select");
 const selectPage = document.querySelector("#page-select");
 const selectBrand = document.querySelector("#brand-select");
 const selectFilter = document.querySelector("#sort-select");
-const selectOtherFilter = document.querySelector("#limit-select")
+const selectOtherFilter = document.querySelector("#limit-select");
 const sectionProducts = document.querySelector("#products");
 const spanNbProducts = document.querySelector("#nbProducts");
 const span50 = document.querySelector("#p50");
@@ -41,7 +43,13 @@ const setCurrentProducts = ({ pagecount, currentPage, pageSize, products }) => {
  * @param  {Number}  [size=12] - size of the page
  * @return {Object}
  */
-const fetchProducts = async (page = 1, size = 12, brand = "all",filter="price_asc",otherfilter="none") => {
+const fetchProducts = async (
+  page = 1,
+  size = 12,
+  brand = "all",
+  filter = "price_asc",
+  otherfilter = "none"
+) => {
   try {
     var query = `http://localhost:8092/products/search?page=${page}&size=${size}&sort=${filter}&otherfilter=${otherfilter}`;
     if (brand != "all") {
@@ -55,6 +63,24 @@ const fetchProducts = async (page = 1, size = 12, brand = "all",filter="price_as
     console.error(error);
     return { currentProducts, currentPagination };
   }
+};
+
+const fetchFavProducts = async (favProducts) => {
+  let favProductsInfo = [];
+  for (let i = 0; i < favProducts.length; i++) {
+    let id = favProducts[i];
+    try {
+      var query = `http://localhost:8092/products/${id}`;
+      console.log(query);
+      const response = await fetch(query);
+      const body = await response.json();
+      favProductsInfo.push(body[0]);
+    } catch (error) {
+      console.error(error);
+      return { currentProducts, currentPagination };
+    }
+  }
+  return favProductsInfo;
 };
 
 const fetchDBInfo = async () => {
@@ -78,10 +104,11 @@ const renderProducts = (products) => {
   const template = products
     .map((product) => {
       return `
-      <div class="product" id=${product.uuid}>
+      <div class="product" id=${product._id}>
+      <input id="cb${product._id}" class="star" type="checkbox" title="bookmark page" onclick="addToFav(this.id)">
         <span>${product.brand}</span>
         <a href="${product.link}" target="_blank">${product.name}</a>
-        <span>${product.price}</span>
+        <span>${product.price}€</span>
       </div>
     `;
     })
@@ -134,6 +161,9 @@ const render = (products, pagination) => {
   renderPagination(pagination);
 };
 
+const renderFav = (products) => {
+  renderProducts(products);
+};
 /**
  * Declaration of all Listeners
  */
@@ -147,7 +177,7 @@ selectShow.addEventListener("change", async (event) => {
     parseInt(event.target.value),
     currentBrand,
     currentFilter,
-    currentOtherFilter,  
+    currentOtherFilter
   );
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
@@ -161,7 +191,7 @@ selectPage.addEventListener("change", async (event) => {
     currentSize,
     currentBrand,
     currentFilter,
-    currentOtherFilter,  
+    currentOtherFilter
   );
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
@@ -173,7 +203,7 @@ selectBrand.addEventListener("change", async (event) => {
     currentSize,
     event.target.value,
     currentFilter,
-    currentOtherFilter,  
+    currentOtherFilter
   );
   currentBrand = event.target.value;
   setCurrentProducts(products);
@@ -186,7 +216,7 @@ selectFilter.addEventListener("change", async (event) => {
     currentSize,
     currentBrand,
     event.target.value,
-    currentOtherFilter,    
+    currentOtherFilter
   );
   currentFilter = event.target.value;
   setCurrentProducts(products);
@@ -199,9 +229,9 @@ selectOtherFilter.addEventListener("change", async (event) => {
     currentSize,
     currentBrand,
     currentFilter,
-    event.target.value,  
+    event.target.value
   );
-  currentOtherFilter= event.target.value;
+  currentOtherFilter = event.target.value;
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
@@ -212,3 +242,38 @@ document.addEventListener("DOMContentLoaded", async () => {
   render(currentProducts, currentPagination);
   renderIndicators(currentPagination);
 });
+
+function addToFav(id) {
+  var checkBox = document.getElementById(id);
+  id = id.substring(2);
+  if (checkBox.checked) {
+    favProducts.push(id);
+    alert("👕 Product added to favorites !👕");
+  } else {
+    const index = favProducts.indexOf(id);
+    favProducts.splice(index, 1);
+    alert("👕 Product removed from favorites !👕");
+
+  }
+  console.log(favProducts);
+}
+
+async function dispFav() {
+  if (favOnly == false) {
+    favOnly = true;
+    const products = await fetchFavProducts(favProducts);
+    renderFav(products);
+  } else {
+    favOnly = false;
+    const products = await fetchProducts(
+      currentPagination.currentPage,
+      currentSize,
+      currentBrand,
+      currentFilter,
+      currentOtherFilter
+    );
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
+  console.log(favOnly);
+}

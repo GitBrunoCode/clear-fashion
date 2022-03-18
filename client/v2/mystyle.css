@@ -1,0 +1,14 @@
+.star {
+    visibility:hidden;
+    font-size:15px;
+    cursor:pointer;
+}
+.star:before {
+   content: "\2B55";
+   position: absolute;
+   visibility:visible;
+}
+.star:checked:before {
+   content: "\2B50";
+   position: absolute;
+}
