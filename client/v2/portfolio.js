@@ -51,7 +51,7 @@ const fetchProducts = async (
   otherfilter = "none"
 ) => {
   try {
-    var query = `http://localhost:8092/products/search?page=${page}&size=${size}&sort=${filter}&otherfilter=${otherfilter}`;
+    var query = `https://server-five-delta.vercel.app/products/search?page=${page}&size=${size}&sort=${filter}&otherfilter=${otherfilter}`;
     if (brand != "all") {
       query += `&brand=${brand}`;
     }
@@ -70,7 +70,7 @@ const fetchFavProducts = async (favProducts) => {
   for (let i = 0; i < favProducts.length; i++) {
     let id = favProducts[i];
     try {
-      var query = `http://localhost:8092/products/${id}`;
+      var query = `https://server-five-delta.vercel.app/products/${id}`;
       console.log(query);
       const response = await fetch(query);
       const body = await response.json();
@@ -85,7 +85,7 @@ const fetchFavProducts = async (favProducts) => {
 
 const fetchDBInfo = async () => {
   try {
-    const response = await fetch(`http://localhost:8092/products/info`);
+    const response = await fetch(`https://server-five-delta.vercel.app/products/info`);
     const body = await response.json();
     return body;
   } catch (error) {
