@@ -103,7 +103,19 @@ const renderProducts = (products) => {
   const div = document.createElement("div");
   const template = products
     .map((product) => {
-      return `
+      if(favProducts.includes(product._id)){
+        return `
+      <div class="product" id=${product._id}>
+      <input id="cb${product._id}" class="star" type="checkbox" title="bookmark page" onclick="addToFav(this.id)" checked>
+        <span>${product.brand}</span>
+        <a href="${product.link}" target="_blank">${product.name}</a>
+        <span>${product.price}€</span>
+      </div>
+    `;
+      }
+      else
+      {
+        return `
       <div class="product" id=${product._id}>
       <input id="cb${product._id}" class="star" type="checkbox" title="bookmark page" onclick="addToFav(this.id)">
         <span>${product.brand}</span>
@@ -111,6 +123,8 @@ const renderProducts = (products) => {
         <span>${product.price}€</span>
       </div>
     `;
+      }
+      
     })
     .join("");
 
