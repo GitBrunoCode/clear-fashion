@@ -5,38 +5,73 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>👕 Clear Fahion | Environmentally & human-friendly clothes</title>
   </head>
-  <body>
-    <h1>Clear fashion</h1>
+  <body
+    height: 100vh;
+background: linear-gradient(to bottom, grey, black);></body>
+    <div class="centered"><h1>Clear fashion</h1></div>
+    <section class="title" id="indicators">
+      <h2 class="title">🟠 Indicators</h2>
+      <div>
+        <span>🔸 Number of products</span>
+        <span id="nbProducts">0</span>
+      </div>
+      <div>
+        <span>🔸 Number of new products</span>
+        <span id="new">0</span>
+      </div>
+      <div>
+        <span>🔸 P50 price value €</span>
+        <span id="p50">0</span>
+      </div>
+      <div>
+        <span>🔸 P90 price value €</span>
+        <span id="p90">0</span>
+      </div>
+      <div>
+        <span>🔸 P95 price value €</span>
+        <span id="p95">0</span>
+      </div>
+      <div>
+        <span>🔸 Last released date</span>
+        <span id="last_release">0</span>
+      </div>
+    </section>
+    <br>
+    <div id="trait_dessus"><hr></div>
+    <div id="trait_dessus"><hr></div>
     <section id="options">
-      <div id="show">
-        <label for="show-select">Show:</label>
+      <h2 class="title">🟠 Filters</h2>
+      <div class="container">
+      <div class="select" id="show">
+        <label for="show-select">🔸 Show:</label>
         <select name="show" id="show-select">
           <option value="12">12</option>
           <option value="24">24</option>
           <option value="48">48</option>
         </select>
       </div>
-      <div id="page">
-        <label for="page-select">Go to page:</label>
+      <div class="select" id="page">
+        <label for="page-select">🔸 Go to page:</label>
         <select name="page" id="page-select"></select>
       </div>
       <div id="filters">
-        <div id="brand">
-          <label for="brand-select">By brands:</label>
+        <div class="select" id="brand">
+          <label for="brand-select">🔸 By brands:</label>
           <select name="brand" id="brand-select">
             <option value="all">all</option>
           </select>
         </div>
-      <div id="filters_price_released">
-        <label for="limit-select">Other Filter:</label>
+      </div>
+      <div class="select" id="filters_price_released">
+        <label for="limit-select">🔸 Other Filter:</label>
         <select name="limit-select" id="limit-select">
           <option value="none">none</option>
           <option value="reas_price">reasonnable price</option>
           <option value="rec_date">recent date</option>
         </select>
     </div>
-      <div id="sort">
-        <label for="sort-select">Sort:</label>
+      <div class="select" id="sort">
+        <label for="sort-select">🔸 Sort:</label>
         <select name="sort" id="sort-select">
           <option value="price_asc">Cheaper</option>
           <option value="price_desc">Expensive</option>
@@ -44,36 +79,19 @@
           <option value="date_desc">Anciently released</option>
         </select>
       </div>
+      </div>
+      <br>
+      <br>
     </section>
-    <section id="indicators">
-      <h2>Indicators</h2>
-      <div>
-        <span>Number of products</span>
-        <span id="nbProducts">0</span>
-      </div>
-      <div>
-        <span>Number of new products</span>
-        <span id="new">0</span>
-      </div>
-      <div>
-        <span>p50 price value</span>
-        <span id="p50">0</span>
-      </div>
-      <div>
-        <span>p90 price value</span>
-        <span id="p90">0</span>
-      </div>
-      <div>
-        <span>p95 price value</span>
-        <span id="p95">0</span>
-      </div>
-      <div>
-        <span>Last released date</span>
-        <span id="last_release">0</span>
-      </div>
-    </section>
-      <button id="fav" type="button" onclick="dispFav()">Favorite Only</button>
+    <div class="centered">
+    <button id="fav" class="button-62" type="button" onclick="dispFav()">Click Here to show your favorite(s) Only</button>
+    </div>
+    <br>
     <section id="products"></section>
     <script type="text/javascript" charset="UTF-8" src="portfolio.js"></script>
   </body>
 </html>
+
+
+
+

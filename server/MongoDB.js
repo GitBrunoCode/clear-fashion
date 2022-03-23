@@ -1,3 +1,7 @@
+let client_table=[]
+
+
+
 const { MongoClient } = require("mongodb");
 const products = require("./sources/products.json");
 const { calculateLimitAndOffset, paginate } = require("paginate-info");
@@ -11,6 +15,7 @@ async function Connection() {
     const client = await MongoClient.connect(MONGODB_URI, {
       useNewUrlParser: true,
     });
+    client_table.push(client);
     const db = client.db(MONGODB_DB_NAME);
     console.log("connected");
     return db;
@@ -87,6 +92,8 @@ module.exports.Prod_by_id = async (id) => {
   const collection = db.collection("products");
   const result = await collection.find({ _id: id }).toArray();
   console.log(result);
+  client_table[0].close();
+  client_table.pop();
   return result;
 };
 
@@ -150,6 +157,7 @@ module.exports.Search = async (params) => {
       .skip(offset)
       .toArray();
     // console.log(result);
+    client_table[0].close();
     return result;
   } else if (sort == "price_desc") {
     result["products"] = await collection
@@ -164,6 +172,8 @@ module.exports.Search = async (params) => {
       .skip(offset)
       .toArray();
     // console.log(result);
+    client_table[0].close();
+    client_table.pop();
     return result;
   } else if (sort == "date_asc") {
     result["products"] = await collection
@@ -178,6 +188,8 @@ module.exports.Search = async (params) => {
       .skip(offset)
       .toArray();
     //console.log(result);
+    client_table[0].close();
+    client_table.pop();
     return result;
   } else sort == "date_desc";
   {
@@ -193,6 +205,8 @@ module.exports.Search = async (params) => {
       .skip(offset)
       .toArray();
     //console.log(result);
+    client_table[0].close();
+    client_table.pop();
     return result;
   }
 };
@@ -234,6 +248,8 @@ module.exports.DB_info = async () => {
     .find({ date: { $gt: new Date(Date.now() - 12096e5).toISOString() } })
     .count();
   console.log(result);
+  client_table[0].close();
+  client_table.pop();
   return result;
 };
 // InsertProducts();

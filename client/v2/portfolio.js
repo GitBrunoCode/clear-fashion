@@ -51,7 +51,7 @@ const fetchProducts = async (
   otherfilter = "none"
 ) => {
   try {
-    var query = `https://server-five-delta.vercel.app/products/search?page=${page}&size=${size}&sort=${filter}&otherfilter=${otherfilter}`;
+    var query = `https://server-pearl-three.vercel.app/products/search?page=${page}&size=${size}&sort=${filter}&otherfilter=${otherfilter}`;
     if (brand != "all") {
       query += `&brand=${brand}`;
     }
@@ -70,7 +70,7 @@ const fetchFavProducts = async (favProducts) => {
   for (let i = 0; i < favProducts.length; i++) {
     let id = favProducts[i];
     try {
-      var query = `https://server-five-delta.vercel.app/products/${id}`;
+      var query = `https://server-pearl-three.vercel.app/products/${id}`;
       console.log(query);
       const response = await fetch(query);
       const body = await response.json();
@@ -85,7 +85,9 @@ const fetchFavProducts = async (favProducts) => {
 
 const fetchDBInfo = async () => {
   try {
-    const response = await fetch(`https://server-five-delta.vercel.app/products/info`);
+    const response = await fetch(
+      `https://server-pearl-three.vercel.app/products/info`
+    );
     const body = await response.json();
     return body;
   } catch (error) {
@@ -101,36 +103,48 @@ const fetchDBInfo = async () => {
 const renderProducts = (products) => {
   const fragment = document.createDocumentFragment();
   const div = document.createElement("div");
+  console.log(products);
+
   const template = products
     .map((product) => {
-      if(favProducts.includes(product._id)){
+      if (product.brand == "loom") {
+        console.log("aaaa");
+        product["photo"] = "https:" + product["photo"];
+        console.log(product);
+      }
+      if (favProducts.includes(product._id)) {
         return `
       <div class="product" id=${product._id}>
       <input id="cb${product._id}" class="star" type="checkbox" title="bookmark page" onclick="addToFav(this.id)" checked>
         <span>${product.brand}</span>
         <a href="${product.link}" target="_blank">${product.name}</a>
         <span>${product.price}€</span>
+        <img src="${product.photo}" width="300" height="300"  alt=""/>
       </div>
     `;
-      }
-      else
-      {
+      } else {
         return `
       <div class="product" id=${product._id}>
-      <input id="cb${product._id}" class="star" type="checkbox" title="bookmark page" onclick="addToFav(this.id)">
-        <span>${product.brand}</span>
-        <a href="${product.link}" target="_blank">${product.name}</a>
-        <span>${product.price}€</span>
+      <input id="cb${product._id}" class="star" type="checkbox" title="bookmark page" onclick="addToFav(this.id)" style="display:block; margin:auto;">
+        <span class="span2">👔 Brand: ${product.brand}</span>
+        <div align="center">
+        <a class="span2" href="${product.link}" target="_blank">👕 ${product.name}</a>
+        </div>
+        <span class="span2">💰 Price: ${product.price}€</span>
+        <p margin-left: 50%; align="center">
+        <img src="${product.photo}"  height="300" alt=""/>
       </div>
+      <div id="trait_dessus"><hr></div>
+      <div id="trait_dessus"><hr></div>
+      <br>
     `;
       }
-      
     })
     .join("");
 
   div.innerHTML = template;
   fragment.appendChild(div);
-  sectionProducts.innerHTML = "<h2>Products</h2>";
+  sectionProducts.innerHTML = '<h2 class="title">🟠 Products</h2>';
   sectionProducts.appendChild(fragment);
 };
 
@@ -267,15 +281,22 @@ function addToFav(id) {
     const index = favProducts.indexOf(id);
     favProducts.splice(index, 1);
     alert("👕 Product removed from favorites !👕");
-
   }
   console.log(favProducts);
 }
 
 async function dispFav() {
+  dispDiv("filters");
+  dispDiv("filters_price_released");
+  dispDiv("sort");
+  dispDiv("brand");
+  dispDiv("page");
+  dispDiv("show");
+  const btn=document.getElementById("btn")
   if (favOnly == false) {
     favOnly = true;
     const products = await fetchFavProducts(favProducts);
+    btn.innerText = "Click Here to show all products";
     renderFav(products);
   } else {
     favOnly = false;
@@ -286,8 +307,18 @@ async function dispFav() {
       currentFilter,
       currentOtherFilter
     );
+    btn.innerText = "Click Here to show your favorite(s) Only";
     setCurrentProducts(products);
     render(currentProducts, currentPagination);
   }
   console.log(favOnly);
+}
+
+function dispDiv(id) {
+  const targetDiv = document.getElementById(id);
+  if (targetDiv.style.display !== "none") {
+    targetDiv.style.display = "none";
+  } else {
+    targetDiv.style.display = "block";
+  }
 }
