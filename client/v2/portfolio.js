@@ -103,40 +103,54 @@ const fetchDBInfo = async () => {
 const renderProducts = (products) => {
   const fragment = document.createDocumentFragment();
   const div = document.createElement("div");
-  console.log(products);
-
   const template = products
     .map((product) => {
       if (product.brand == "loom") {
-        console.log("aaaa");
         product["photo"] = "https:" + product["photo"];
-        console.log(product);
       }
       if (favProducts.includes(product._id)) {
         return `
-      <div class="product" id=${product._id}>
-      <input id="cb${product._id}" class="star" type="checkbox" title="bookmark page" onclick="addToFav(this.id)" checked>
-        <span>${product.brand}</span>
-        <a href="${product.link}" target="_blank">${product.name}</a>
-        <span>${product.price}€</span>
-        <img src="${product.photo}" width="300" height="300"  alt=""/>
-      </div>
+        <table>
+        <div class="product" id=${product._id}>
+        <tr>
+          <td>
+                    <img src="${product.photo}"  height="350" alt=""/>
+          </td>
+          <td class="td2">
+                    <span class="span2">👔 Brand: ${product.brand}</span>
+                    <a class="span2" href="${product.link}" target="_blank">👕 ${product.name}</a>
+                    </div>
+                    <span class="span2">💰 Price: ${product.price}€</span>
+                    <br>
+                    <input id="cb${product._id}" class="star" type="checkbox" title="Add or Remove from Favorite" onclick="addToFav(this.id)" checked>
+                    <label class="label2" for="cb${product._id}"> &nbsp;Add/Remove from favorite</label>
+          </td>
+        </tr>
+        <div id="trait_dessus"><hr></div>
+        <div id="trait_dessus"><hr></div>
+        </table>
     `;
       } else {
         return `
+      <table>
       <div class="product" id=${product._id}>
-      <input id="cb${product._id}" class="star" type="checkbox" title="bookmark page" onclick="addToFav(this.id)" style="display:block; margin:auto;">
-        <span class="span2">👔 Brand: ${product.brand}</span>
-        <div align="center">
-        <a class="span2" href="${product.link}" target="_blank">👕 ${product.name}</a>
-        </div>
-        <span class="span2">💰 Price: ${product.price}€</span>
-        <p margin-left: 50%; align="center">
-        <img src="${product.photo}"  height="300" alt=""/>
-      </div>
+      <tr>
+        <td>
+                  <img src="${product.photo}"  height="350" alt=""/>
+        </td>
+        <td class="td2">
+                  <span class="span2">👔 Brand: ${product.brand}</span>
+                  <a class="span2" href="${product.link}" target="_blank">👕 ${product.name}</a>
+                  </div>
+                  <span class="span2">💰 Price: ${product.price}€</span>
+                  <br>
+                  <input id="cb${product._id}" class="star" type="checkbox" title="Add or Remove from Favorite" onclick="addToFav(this.id)" ">
+                  <label class="label2" for="cb${product._id}"> &nbsp;Add/Remove from favorite</label>
+        </td>
+      </tr>
       <div id="trait_dessus"><hr></div>
       <div id="trait_dessus"><hr></div>
-      <br>
+      </table>
     `;
       }
     })
@@ -282,17 +296,12 @@ function addToFav(id) {
     favProducts.splice(index, 1);
     alert("👕 Product removed from favorites !👕");
   }
-  console.log(favProducts);
 }
 
 async function dispFav() {
-  dispDiv("filters");
-  dispDiv("filters_price_released");
-  dispDiv("sort");
-  dispDiv("brand");
-  dispDiv("page");
-  dispDiv("show");
-  const btn=document.getElementById("btn")
+  dispDiv("options");
+  dispDiv("indicators")
+  const btn=document.getElementById("fav")
   if (favOnly == false) {
     favOnly = true;
     const products = await fetchFavProducts(favProducts);
@@ -311,7 +320,6 @@ async function dispFav() {
     setCurrentProducts(products);
     render(currentProducts, currentPagination);
   }
-  console.log(favOnly);
 }
 
 function dispDiv(id) {
